@@ -1,0 +1,105 @@
+{
+  "client": [
+    {"client_id": 1, "full_name": "Иванов Пётр Сергеевич", "phone": "+7 916 100-20-30", "license_number": "77 12 345678", "account_status": "активен"},
+    {"client_id": 2, "full_name": "Смирнова Анна Олеговна", "phone": "+7 925 200-30-40", "license_number": "50 21 654321", "account_status": "активен"},
+    {"client_id": 3, "full_name": "Ким Денис Андреевич", "phone": "+7 903 300-40-50", "license_number": "77 30 112233", "account_status": "активен"}
+  ],
+  "tariff": [
+    {"tariff_id": 1, "name": "Эконом", "drive_price": "11.90", "wait_price": "4.50", "free_wait_min": 20},
+    {"tariff_id": 2, "name": "Комфорт", "drive_price": "15.50", "wait_price": "5.90", "free_wait_min": 15}
+  ],
+  "car": [
+    {"car_id": 1, "plate": "А123ВС777", "model": "Kia Rio", "tariff_id": 1, "status": "в аренде", "lat": 55.7558, "lon": 37.6173, "fuel_level": 45},
+    {"car_id": 2, "plate": "В456ЕК799", "model": "Hyundai Solaris", "tariff_id": 1, "status": "в аренде", "lat": 55.6512, "lon": 37.4120, "fuel_level": 6},
+    {"car_id": 3, "plate": "Е789КМ797", "model": "Skoda Octavia", "tariff_id": 2, "status": "в аренде", "lat": 55.9680, "lon": 37.4150, "fuel_level": 30},
+    {"car_id": 4, "plate": "К321МН777", "model": "Kia Rio", "tariff_id": 1, "status": "свободен", "lat": 55.7600, "lon": 37.6400, "fuel_level": 80}
+  ],
+  "zone": [
+    {"zone_id": 1, "name": "Центр"},
+    {"zone_id": 2, "name": "Шереметьево"}
+  ],
+  "zone_point": [
+    {"zone_id": 1, "seq_no": 1, "lat": 55.70, "lon": 37.50},
+    {"zone_id": 1, "seq_no": 2, "lat": 55.70, "lon": 37.72},
+    {"zone_id": 1, "seq_no": 3, "lat": 55.80, "lon": 37.72},
+    {"zone_id": 1, "seq_no": 4, "lat": 55.80, "lon": 37.50},
+    {"zone_id": 2, "seq_no": 1, "lat": 55.96, "lon": 37.40},
+    {"zone_id": 2, "seq_no": 2, "lat": 55.96, "lon": 37.44},
+    {"zone_id": 2, "seq_no": 3, "lat": 55.98, "lon": 37.44},
+    {"zone_id": 2, "seq_no": 4, "lat": 55.97, "lon": 37.42},
+    {"zone_id": 2, "seq_no": 5, "lat": 55.98, "lon": 37.40}
+  ],
+  "booking": [
+    {"booking_id": 1, "client_id": 1, "car_id": 1, "created_at": "2026-10-20T08:40:00", "expires_at": "2026-10-20T09:00:00", "status": "исполнено"},
+    {"booking_id": 2, "client_id": 2, "car_id": 2, "created_at": "2026-10-20T12:05:00", "expires_at": "2026-10-20T12:25:00", "status": "исполнено"},
+    {"booking_id": 3, "client_id": 3, "car_id": 3, "created_at": "2026-10-20T17:50:00", "expires_at": "2026-10-20T18:05:00", "status": "исполнено"}
+  ],
+  "rental": [
+    {"rental_id": 1, "booking_id": 1, "started_at": "2026-10-20T08:52:00", "finished_at": "2026-10-20T09:38:10", "finish_lat": 55.7558, "finish_lon": 37.6173, "fuel_end": 45, "zone_id": null, "cost": null},
+    {"rental_id": 2, "booking_id": 2, "started_at": "2026-10-20T12:20:00", "finished_at": "2026-10-20T13:02:30", "finish_lat": 55.6512, "finish_lon": 37.4120, "fuel_end": 6, "zone_id": null, "cost": null},
+    {"rental_id": 3, "booking_id": 3, "started_at": "2026-10-20T18:01:00", "finished_at": "2026-10-20T18:58:00", "finish_lat": 55.9680, "finish_lon": 37.4150, "fuel_end": 30, "zone_id": null, "cost": null}
+  ],
+  "rental_segment": [
+    {"segment_id": 1, "rental_id": 1, "mode": "движение", "started_at": "2026-10-20T08:52:00", "finished_at": "2026-10-20T09:15:00"},
+    {"segment_id": 2, "rental_id": 1, "mode": "ожидание", "started_at": "2026-10-20T09:15:00", "finished_at": "2026-10-20T09:22:10"},
+    {"segment_id": 3, "rental_id": 1, "mode": "движение", "started_at": "2026-10-20T09:22:10", "finished_at": "2026-10-20T09:38:10"},
+    {"segment_id": 4, "rental_id": 2, "mode": "движение", "started_at": "2026-10-20T12:20:00", "finished_at": "2026-10-20T13:02:30"},
+    {"segment_id": 5, "rental_id": 3, "mode": "движение", "started_at": "2026-10-20T18:01:00", "finished_at": "2026-10-20T18:40:00"},
+    {"segment_id": 6, "rental_id": 3, "mode": "ожидание", "started_at": "2026-10-20T18:40:00", "finished_at": "2026-10-20T18:58:00"}
+  ],
+  "photo_view": [
+    {"view_id": 1, "name": "Спереди", "required": true},
+    {"view_id": 2, "name": "Сзади", "required": true},
+    {"view_id": 3, "name": "Слева", "required": true},
+    {"view_id": 4, "name": "Справа", "required": true},
+    {"view_id": 5, "name": "Салон", "required": true},
+    {"view_id": 6, "name": "Приборная панель", "required": false}
+  ],
+  "inspection": [
+    {"inspection_id": 1, "rental_id": 1, "stage": "приём", "created_at": "2026-10-20T08:50:00"},
+    {"inspection_id": 2, "rental_id": 1, "stage": "сдача", "created_at": "2026-10-20T09:37:00"},
+    {"inspection_id": 3, "rental_id": 2, "stage": "приём", "created_at": "2026-10-20T12:18:00"},
+    {"inspection_id": 4, "rental_id": 2, "stage": "сдача", "created_at": "2026-10-20T13:01:00"},
+    {"inspection_id": 5, "rental_id": 3, "stage": "приём", "created_at": "2026-10-20T17:59:00"},
+    {"inspection_id": 6, "rental_id": 3, "stage": "сдача", "created_at": "2026-10-20T18:56:00"}
+  ],
+  "photo": [
+    {"inspection_id": 1, "view_id": 1, "file_name": "i1_front.jpg", "taken_at": "2026-10-20T08:48:10"},
+    {"inspection_id": 1, "view_id": 2, "file_name": "i1_back.jpg", "taken_at": "2026-10-20T08:48:40"},
+    {"inspection_id": 1, "view_id": 3, "file_name": "i1_left.jpg", "taken_at": "2026-10-20T08:49:05"},
+    {"inspection_id": 1, "view_id": 4, "file_name": "i1_right.jpg", "taken_at": "2026-10-20T08:49:30"},
+    {"inspection_id": 1, "view_id": 5, "file_name": "i1_cabin.jpg", "taken_at": "2026-10-20T08:49:55"},
+    {"inspection_id": 2, "view_id": 1, "file_name": "i2_front.jpg", "taken_at": "2026-10-20T09:35:10"},
+    {"inspection_id": 2, "view_id": 2, "file_name": "i2_back.jpg", "taken_at": "2026-10-20T09:35:30"},
+    {"inspection_id": 2, "view_id": 3, "file_name": "i2_left.jpg", "taken_at": "2026-10-20T09:35:50"},
+    {"inspection_id": 2, "view_id": 4, "file_name": "i2_right.jpg", "taken_at": "2026-10-20T09:36:10"},
+    {"inspection_id": 2, "view_id": 5, "file_name": "i2_cabin.jpg", "taken_at": "2026-10-20T09:36:30"},
+    {"inspection_id": 2, "view_id": 6, "file_name": "i2_panel.jpg", "taken_at": "2026-10-20T09:36:50"},
+    {"inspection_id": 3, "view_id": 1, "file_name": "i3_front.jpg", "taken_at": "2026-10-20T12:16:00"},
+    {"inspection_id": 3, "view_id": 2, "file_name": "i3_back.jpg", "taken_at": "2026-10-20T12:16:20"},
+    {"inspection_id": 3, "view_id": 3, "file_name": "i3_left.jpg", "taken_at": "2026-10-20T12:16:40"},
+    {"inspection_id": 3, "view_id": 4, "file_name": "i3_right.jpg", "taken_at": "2026-10-20T12:17:00"},
+    {"inspection_id": 3, "view_id": 5, "file_name": "i3_cabin.jpg", "taken_at": "2026-10-20T12:17:20"},
+    {"inspection_id": 4, "view_id": 1, "file_name": "i4_front.jpg", "taken_at": "2026-10-20T13:00:10"},
+    {"inspection_id": 4, "view_id": 3, "file_name": "i4_left.jpg", "taken_at": "2026-10-20T13:00:30"},
+    {"inspection_id": 4, "view_id": 4, "file_name": "i4_right.jpg", "taken_at": "2026-10-20T13:00:50"},
+    {"inspection_id": 5, "view_id": 1, "file_name": "i5_front.jpg", "taken_at": "2026-10-20T17:57:00"},
+    {"inspection_id": 5, "view_id": 2, "file_name": "i5_back.jpg", "taken_at": "2026-10-20T17:57:20"},
+    {"inspection_id": 5, "view_id": 3, "file_name": "i5_left.jpg", "taken_at": "2026-10-20T17:57:40"},
+    {"inspection_id": 5, "view_id": 4, "file_name": "i5_right.jpg", "taken_at": "2026-10-20T17:58:00"},
+    {"inspection_id": 5, "view_id": 5, "file_name": "i5_cabin.jpg", "taken_at": "2026-10-20T17:58:20"},
+    {"inspection_id": 6, "view_id": 1, "file_name": "i6_front.jpg", "taken_at": "2026-10-20T18:54:00"},
+    {"inspection_id": 6, "view_id": 2, "file_name": "i6_back.jpg", "taken_at": "2026-10-20T18:54:20"},
+    {"inspection_id": 6, "view_id": 3, "file_name": "i6_left.jpg", "taken_at": "2026-10-20T18:54:40"},
+    {"inspection_id": 6, "view_id": 4, "file_name": "i6_right.jpg", "taken_at": "2026-10-20T18:55:00"},
+    {"inspection_id": 6, "view_id": 5, "file_name": "i6_cabin.jpg", "taken_at": "2026-10-20T18:55:20"}
+  ],
+  "surcharge_type": [
+    {"surcharge_type_id": 1, "name": "Завершение вне зоны", "amount": "300.00"},
+    {"surcharge_type_id": 2, "name": "Пустой бак", "amount": "500.00"},
+    {"surcharge_type_id": 3, "name": "Эвакуация", "amount": "3000.00"}
+  ],
+  "surcharge": [],
+  "payment": [],
+  "claim": []
+}
