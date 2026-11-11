@@ -1,5 +1,5 @@
 import math
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Any
 
@@ -22,7 +22,7 @@ LOW_FUEL = "Пустой бак"
 
 
 def check_inspection(
-    inspection_id: int,
+    inspection_id: int | None,
     photos: list[Row],
     views: list[Row],
 ) -> list[str]:
@@ -48,6 +48,13 @@ def check_finish_zone(lat: float, lon: float, polygons: list[Polygon]) -> int | 
         for i in range(len(vertices)):
             lat_i, lon_i = vertices[i]
             lat_j, lon_j = vertices[j]
+            cross = (lat - lat_i) * (lon_j - lon_i) - (lon - lon_i) * (lat_j - lat_i)
+            if (
+                math.isclose(cross, 0.0, abs_tol=1e-12)
+                and min(lat_i, lat_j) <= lat <= max(lat_i, lat_j)
+                and min(lon_i, lon_j) <= lon <= max(lon_i, lon_j)
+            ):
+                return zone_id
             if (lat_i > lat) != (lat_j > lat):
                 cross_lon = lon_i + (lat - lat_i) * (lon_j - lon_i) / (lat_j - lat_i)
                 if lon < cross_lon:
@@ -73,6 +80,8 @@ def calc_trip_cost(
         duration = datetime.fromisoformat(s["finished_at"]) - datetime.fromisoformat(
             s["started_at"],
         )
+        if duration < timedelta(0) or s["mode"] not in {"движение", "ожидание"}:
+            raise ValueError(f"Некорректный сегмент аренды: {s['segment_id']}")
         minutes = math.ceil(duration.total_seconds() / 60)
         if s["mode"] == "движение":
             drive_min += minutes

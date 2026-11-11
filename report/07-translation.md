@@ -1,6 +1,6 @@
 # ПРИЛОЖЕНИЕ А (обязательное). Перевод фрагмента иностранного источника
 
-Оригинал: Turoń, K. Car-Sharing Systems in Smart Cities: A Review of the Most Important Issues Related to the Functioning of the Systems in Light of the Scientific Research / K. Turoń. - Текст : электронный // Smart Cities. - 2023. - Vol. 6, No. 2. - P. 796-808. - DOI 10.3390/smartcities6020038. - URL: https://www.mdpi.com/2624-6511/6/2/38 (дата обращения: 01.10.2026). [8]
+Оригинал: Turoń, K. Car-Sharing Systems in Smart Cities: A Review of the Most Important Issues Related to the Functioning of the Systems in Light of the Scientific Research / K. Turoń. - Текст : электронный // Smart Cities. - 2023. - Vol. 6, No. 2. - P. 796-808. - DOI 10.3390/smartcities6020038. - URL: https://www.mdpi.com/2624-6511/6/2/38 (дата обращения: 01.10.2026). [7]
 
 Переведены аннотация и раздел 4 «Final Remarks» (с. 796 и 805-806 оригинала). Статья распространяется по лицензии Creative Commons Attribution (CC BY 4.0).
 

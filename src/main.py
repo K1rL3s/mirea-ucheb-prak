@@ -42,21 +42,6 @@ def finish_rental(
         ),
     ]
 
-    returned = next(
-        i
-        for i in data["inspection"]
-        if i["rental_id"] == rental["rental_id"] and i["stage"] == "сдача"
-    )
-    missing = check_inspection(
-        returned["inspection_id"],
-        data["photo"],
-        data["photo_view"],
-    )
-    if missing:
-        lines.append("  Фотоосмотр при сдаче: не хватает: " + ", ".join(missing))
-    else:
-        lines.append("  Фотоосмотр при сдаче: полный")
-
     zone_id = check_finish_zone(rental["finish_lat"], rental["finish_lon"], polygons)
     if zone_id is None:
         lines.append("  Место завершения: вне зон завершения")
@@ -79,6 +64,24 @@ def finish_rental(
         for s in trip["surcharges"]
     )
     lines.append(f"  Стоимость поездки: {trip['cost']:.2f} руб.")
+
+    returned = next(
+        (
+            i
+            for i in data["inspection"]
+            if i["rental_id"] == rental["rental_id"] and i["stage"] == "сдача"
+        ),
+        None,
+    )
+    missing = check_inspection(
+        returned["inspection_id"] if returned is not None else None,
+        data["photo"],
+        data["photo_view"],
+    )
+    if missing:
+        lines.append("  Фотоосмотр при сдаче: не хватает: " + ", ".join(missing))
+    else:
+        lines.append("  Фотоосмотр при сдаче: полный")
 
     needs_service = bool(missing) or rental["fuel_end"] < LOW_FUEL_PERCENT
     updated = set_car_status(car, "на обслуживании" if needs_service else "свободен")
