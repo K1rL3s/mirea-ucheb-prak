@@ -1,0 +1,259 @@
+@startuml classes_packages
+skinparam defaultFontName "Liberation Sans"
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide circle
+title Пакеты программы
+package "ru.mirea.carsharing" as cli {
+  class Main {
+    - Main()
+    {static} + main(args: String[]): void
+    {static} - finishRental(rental: Rental, data: RentalData, rules: Map): List<String>
+  }
+  class JsonReader {
+    ~ read(path: Path): RentalData
+    - segment(row: JsonNode): RentalSegment
+    - rows(data: JsonNode, key: String, read: Function): List<T>
+    - grouped(data: JsonNode, key: String, foreignKey: String, read: Function): Map<Integer, List<T>>
+    - index(values: List<T>, id: ToIntFunction<T>): Map<Integer, T>
+    - linked(values: Map<Integer, T>, row: JsonNode, key: String): T
+    - id(row: JsonNode, field: String): int
+    - number(row: JsonNode, field: String): double
+    - value(row: JsonNode, field: String): String
+    - money(row: JsonNode, field: String): BigDecimal
+    - time(row: JsonNode, field: String): LocalDateTime
+  }
+  class RentalData <<record>> {
+    - rentals: List<Rental>
+    - zones: List<Zone>
+    - views: List<PhotoView>
+    - surchargeTypes: List<SurchargeType>
+    - recordedSurcharges: List<Surcharge>
+    - payments: List<Payment>
+    - claims: List<Claim>
+  }
+  Main ..> JsonReader
+  Main ..> RentalData
+  JsonReader ..> RentalData
+}
+package "domain.rental" as rental {}
+package "domain.fleet" as fleet {}
+package "domain.geo" as geo {}
+package "domain.inspection" as inspection {}
+package "domain.billing" as billing {}
+cli ..> rental
+cli ..> fleet
+cli ..> geo
+cli ..> inspection
+cli ..> billing
+rental ..> fleet
+rental ..> geo
+rental ..> inspection
+rental ..> billing
+billing ..> rental
+billing ..> geo
+@enduml
+
+@startuml classes_fleet_geo
+skinparam defaultFontName "Liberation Sans"
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide circle
+title Автопарк и зоны завершения
+package "domain.fleet" {
+  class Client <<record>> {
+    - id: int
+    - fullName: String
+    - phone: String
+    - licenseNumber: String
+    - accountStatus: String
+  }
+  class Booking <<record>> {
+    - id: int
+    - client: Client
+    - car: Car
+    - createdAt: LocalDateTime
+    - expiresAt: LocalDateTime
+    - status: String
+  }
+  class Car <<record>> {
+    - id: int
+    - plate: String
+    - model: String
+    - tariff: Tariff
+    - status: String
+    - lat: double
+    - lon: double
+    - fuelLevel: double
+    {static} - TRANSITIONS: Map<String, Set<String>>
+    + withStatus(nextStatus: String): Car
+  }
+  class Tariff <<record>> {
+    - id: int
+    - name: String
+    - drivePrice: BigDecimal
+    - waitPrice: BigDecimal
+    - freeWaitMin: int
+  }
+  Booking "0..*" --> "1" Client : client
+  Booking "0..*" --> "1" Car : car
+  Car "0..*" --> "1" Tariff : tariff
+}
+package "domain.geo" {
+  class Zone <<record>> {
+    - id: int
+    - name: String
+    - points: List<ZonePoint>
+    + contains(lat: double, lon: double): boolean
+    {static} - between(value: double, a: double, b: double): boolean
+  }
+  class ZonePoint <<record>> {
+    - seqNo: int
+    - lat: double
+    - lon: double
+  }
+  Zone "1" *-- "3..*" ZonePoint : points
+}
+@enduml
+
+@startuml classes_rental
+skinparam defaultFontName "Liberation Sans"
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide circle
+title Аренда и фотоосмотр
+package "domain.rental" {
+  class Rental <<record>> {
+    - id: int
+    - booking: Booking
+    - startedAt: LocalDateTime
+    - finishedAt: LocalDateTime
+    - finishLat: double
+    - finishLon: double
+    - fuelEnd: double
+    - recordedZone: Zone
+    - recordedCost: BigDecimal
+    - segments: List<RentalSegment>
+    - inspections: List<Inspection>
+    {static} - LOW_FUEL_PERCENT: int
+    + checkFinishZone(zones: List<Zone>): Zone
+    + calculateTripCost(types: List<SurchargeType>,\nrules: Map<String, SurchargeRule>, finishZone: Zone): TripCost
+    + checkInspection(views: List<PhotoView>): List<String>
+    + hasLowFuel(): boolean
+  }
+  abstract class RentalSegment {
+    - id: int
+    - startedAt: LocalDateTime
+    - finishedAt: LocalDateTime
+    # RentalSegment(id: int, startedAt: LocalDateTime, finishedAt: LocalDateTime)
+    + billableMinutes(): BillableMinutes
+    {abstract} # splitMinutes(minutes: long): BillableMinutes
+  }
+  class DrivingSegment {
+    + DrivingSegment(id: int, startedAt: LocalDateTime, finishedAt: LocalDateTime)
+    # splitMinutes(minutes: long): BillableMinutes
+  }
+  class WaitingSegment {
+    + WaitingSegment(id: int, startedAt: LocalDateTime, finishedAt: LocalDateTime)
+    # splitMinutes(minutes: long): BillableMinutes
+  }
+  class Claim <<record>> {
+    - id: int
+    - rentalId: int
+    - description: String
+    - amount: BigDecimal
+    - status: String
+    - createdAt: LocalDateTime
+  }
+  Rental "1" *-- "0..*" RentalSegment : segments
+  RentalSegment <|-- DrivingSegment
+  RentalSegment <|-- WaitingSegment
+  Claim "0..*" --> "1" Rental : rentalId
+}
+class "fleet.Booking" as Booking
+class "geo.Zone" as Zone
+Rental "0..1" --> "1" Booking : booking
+Rental "0..*" --> "0..1" Zone : recordedZone
+package "domain.inspection" {
+  class Inspection <<record>> {
+    - id: int
+    - stage: String
+    - createdAt: LocalDateTime
+    - photos: List<Photo>
+    + missingViews(views: List<PhotoView>): List<String>
+  }
+  class Photo <<record>> {
+    - view: PhotoView
+    - fileName: String
+    - takenAt: LocalDateTime
+  }
+  class PhotoView <<record>> {
+    - id: int
+    - name: String
+    - required: boolean
+  }
+  Inspection "1" *-- "0..*" Photo : photos
+  Photo "0..*" --> "1" PhotoView : view
+}
+Rental "1" *-- "0..*" Inspection : inspections
+@enduml
+
+@startuml classes_billing
+skinparam defaultFontName "Liberation Sans"
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide circle
+title Расчёт стоимости и оплата
+package "domain.billing" {
+  class BillableMinutes <<record>> {
+    - drive: long
+    - waitMinutes: long
+  }
+  class TripCost <<record>> {
+    - driveMinutes: long
+    - waitMinutes: long
+    - total: BigDecimal
+    - surcharges: List<Surcharge>
+  }
+  class Surcharge <<record>> {
+    - rentalId: int
+    - type: SurchargeType
+    - amount: BigDecimal
+  }
+  class SurchargeType <<record>> {
+    - id: int
+    - name: String
+    - amount: BigDecimal
+  }
+  class Payment <<record>> {
+    - id: int
+    - rentalId: int
+    - amount: BigDecimal
+    - paidAt: LocalDateTime
+    - status: String
+  }
+  interface SurchargeRule {
+    + typeName(): String
+    + applies(rental: Rental, finishZone: Zone): boolean
+  }
+  class OutsideZoneRule {
+    + typeName(): String
+    + applies(rental: Rental, finishZone: Zone): boolean
+  }
+  class LowFuelRule {
+    + typeName(): String
+    + applies(rental: Rental, finishZone: Zone): boolean
+  }
+  SurchargeRule <|.. OutsideZoneRule
+  SurchargeRule <|.. LowFuelRule
+  Surcharge "0..*" --> "1" SurchargeType : type
+  TripCost "0..1" o-- "0..*" Surcharge : surcharges
+}
+class "rental.Rental" as Rental
+class "rental.RentalSegment" as Segment
+Surcharge "0..*" --> "1" Rental : rentalId
+Payment "0..*" --> "1" Rental : rentalId
+Rental ..> SurchargeRule
+Rental ..> TripCost
+Segment ..> BillableMinutes
+@enduml
