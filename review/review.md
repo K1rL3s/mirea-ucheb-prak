@@ -26,8 +26,21 @@
 
 ## Рецензия на реализацию Кирилла Лесового
 
-- Автор реализации - Лесовой Кирилл Романович, ИКБО-10-24
-- Рецензент - Перекопский Максим Михайлович, ИКБО-10-24
-- Репозиторий - https://github.com/K1rL3s/mirea-ucheb-prak
+- Автор: Лесовой Кирилл Романович, ИКБО-10-24.
+- Рецензент: Перекопский Максим Михайлович, ИКБО-10-24.
+- [Репозиторий](https://github.com/K1rL3s/mirea-ucheb-prak), [проверенный коммит `2faad5d`](https://github.com/K1rL3s/mirea-ucheb-prak/commit/2faad5d298aaff3345b7bd2ec36089691b59ea55).
+- Дата проверки: 18.11.2026.
 
-Замечания ожидаются от рецензента. Здесь будут текст каждого замечания, файл и строки, ответ автора и ссылка на коммит с исправлением. Если правка не нужна, в ответе будет указана причина.
+### Что проверено
+
+Сверил связи аренды, сегментов и правил доплат на диаграмме с кодом. `DrivingSegment` и `WaitingSegment` наследуют `RentalSegment`: округление длительности общее, минуты учитываются отдельно для движения и ожидания. `OutsideZoneRule` и `LowFuelRule` реализуют `SurchargeRule`, участвуют в расчёте и срабатывают на второй аренде контрольного примера. `List` сохраняет порядок зон, `Map` связывает записи по идентификаторам, `Set` используется при поиске снятых ракурсов. По коду можно отдельно проследить чтение данных в `JsonReader`, расчёт в `Rental` и формирование вывода в `Main`.
+
+Проверил оба описанных в README варианта запуска: с `data.json` в текущем каталоге и с явным путём. Исходники собрал на JDK 26.0.2.1 с `javac --release 25` и доступной локально версией Jackson 2.19.2. Сборку JAR по README с Maven и Jackson 2.23.0 в этой среде проверить не удалось. На штатном наборе стоимость трёх аренд составила 500,10, 1311,70 и 710,70 руб. После нормализации переносов строк весь вывод совпал с Python и примером из README.
+
+### Замечания
+
+1. **Дробный идентификатор бронирования принимается как целый.** У аренды 1 заменил `booking_id: 1` на `booking_id: 1.5`. Программа привязала аренду к бронированию 1 и завершилась без ошибки. Стоит проверить, что значение является целым числом в диапазоне `int`, перед преобразованием. При ошибке полезно указать имя поля и неверное значение. [JsonReader.java, чтение бронирования](https://github.com/K1rL3s/mirea-ucheb-prak/blob/2faad5d298aaff3345b7bd2ec36089691b59ea55/src/java/src/main/java/ru/mirea/carsharing/JsonReader.java#L65-L70), [преобразование идентификатора](https://github.com/K1rL3s/mirea-ucheb-prak/blob/2faad5d298aaff3345b7bd2ec36089691b59ea55/src/java/src/main/java/ru/mirea/carsharing/JsonReader.java#L122-L133).
+
+2. **Машина может стать свободной без фотоосмотра при сдаче.** У аренды 1 удалил осмотр при сдаче и относящиеся к нему фотографии, а у всех ракурсов выставил `required: false`. Программа вывела «Фотоосмотр при сдаче: полный» и перевела машину в статус «свободен». README указывает, что отсутствие осмотра должно приводить к обслуживанию. Предлагаю отдельно проверять наличие осмотра и учитывать результат при формировании сообщения и выборе статуса. [Rental.java, строки 54-60](https://github.com/K1rL3s/mirea-ucheb-prak/blob/2faad5d298aaff3345b7bd2ec36089691b59ea55/src/java/src/main/java/ru/mirea/carsharing/domain/rental/Rental.java#L54-L60), [Main.java, строки 50-55](https://github.com/K1rL3s/mirea-ucheb-prak/blob/2faad5d298aaff3345b7bd2ec36089691b59ea55/src/java/src/main/java/ru/mirea/carsharing/Main.java#L50-L55), [README](https://github.com/K1rL3s/mirea-ucheb-prak/blob/2faad5d298aaff3345b7bd2ec36089691b59ea55/src/java/README.md#L75).
+
+3. **Зона без вершин загружается и прерывает расчёт.** Удалил из входного файла вершины зоны 1. Чтение данных завершилось, но при первой проверке зоны программа упала с `NoSuchElementException`. На диаграмме у зоны должно быть не менее трёх вершин. Предлагаю проверять это при создании `Zone` и указывать идентификатор зоны в сообщении об ошибке. [JsonReader.java, строки 52-56](https://github.com/K1rL3s/mirea-ucheb-prak/blob/2faad5d298aaff3345b7bd2ec36089691b59ea55/src/java/src/main/java/ru/mirea/carsharing/JsonReader.java#L52-L56), [Zone.java, строки 5-9](https://github.com/K1rL3s/mirea-ucheb-prak/blob/2faad5d298aaff3345b7bd2ec36089691b59ea55/src/java/src/main/java/ru/mirea/carsharing/domain/geo/Zone.java#L5-L9), [связь на диаграмме](https://github.com/K1rL3s/mirea-ucheb-prak/blob/2faad5d298aaff3345b7bd2ec36089691b59ea55/models/classes.puml#L103-L115).
