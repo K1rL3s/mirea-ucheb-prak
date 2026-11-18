@@ -48,9 +48,14 @@ public final class Main {
         lines.add("  Стоимость поездки: %s руб.".formatted(cost.total().toPlainString()));
 
         var missing = rental.checkInspection(data.views());
-        lines.add(missing.isEmpty() ? "  Фотоосмотр при сдаче: полный"
-                : "  Фотоосмотр при сдаче: не хватает: " + String.join(", ", missing));
-        boolean needsService = !missing.isEmpty() || rental.hasLowFuel();
+        if (missing == null) {
+            lines.add("  Фотоосмотр при сдаче: отсутствует");
+        } else if (missing.isEmpty()) {
+            lines.add("  Фотоосмотр при сдаче: полный");
+        } else {
+            lines.add("  Фотоосмотр при сдаче: не хватает: " + String.join(", ", missing));
+        }
+        boolean needsService = missing == null || !missing.isEmpty() || rental.hasLowFuel();
         var updated = car.withStatus(needsService ? "на обслуживании" : "свободен");
         lines.add("  Статус автомобиля: %s -> %s".formatted(car.status(), updated.status()));
         return lines;

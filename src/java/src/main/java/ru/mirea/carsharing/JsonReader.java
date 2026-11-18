@@ -129,7 +129,12 @@ final class JsonReader {
     }
 
     private int id(JsonNode row, String field) {
-        return row.required(field).intValue();
+        var value = row.required(field);
+        if (!value.isIntegralNumber() || !value.canConvertToInt()) {
+            throw new IllegalArgumentException("Поле %s должно быть целым числом в диапазоне int: %s"
+                    .formatted(field, value));
+        }
+        return value.intValue();
     }
 
     private double number(JsonNode row, String field) {

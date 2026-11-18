@@ -29,4 +29,11 @@ public record Zone(int id, String name, List<ZonePoint> points) {
     private static boolean between(double value, double a, double b) {
         return Math.min(a, b) <= value && value <= Math.max(a, b);
     }
+
+    public Zone {
+        points = List.copyOf(points);
+        if (points.size() < 3) {
+            throw new IllegalArgumentException("Зона %d должна содержать не менее 3 вершин".formatted(id));
+        }
+    }
 }

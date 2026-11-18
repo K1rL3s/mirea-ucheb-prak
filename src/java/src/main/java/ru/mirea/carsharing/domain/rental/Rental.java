@@ -57,7 +57,7 @@ public record Rental(
                 return inspection.missingViews(views);
             }
         }
-        return views.stream().filter(PhotoView::required).map(PhotoView::name).toList();
+        return null;
     }
 
     public boolean hasLowFuel() {
